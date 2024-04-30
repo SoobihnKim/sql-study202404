@@ -71,7 +71,7 @@ FROM employees;
 
 -- 12. employees 테이블에서 각 사원의 commission_pct가 NULL일 경우, 0으로 표시하여 출력하세요.
 SELECT
-  first_name
+  first_name,
   NVL(commission_pct, 0)
 FROM employees;
 
