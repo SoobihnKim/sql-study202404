@@ -59,7 +59,7 @@ USING (department_id, manager_id)
 ORDER BY E.employee_id
 ;
 
--- 실습
+-- 실습 practice
 -- 1. employees테이블과 departments테이블을 inner join하여
 --    사번, first_name, last_name, department_id, department_name을 조회하세요.
 SELECT
@@ -71,6 +71,7 @@ SELECT
 FROM employees E
 INNER JOIN departments D
 ON E.department_id = D.department_id
+ORDER BY E.employee_id
 ;
 
 -- 2. employees테이블과 departments테이블을 natural join하여
@@ -83,6 +84,7 @@ SELECT
     D.department_name
 FROM employees E
 NATURAL JOIN departments D
+ORDER BY E.employee_id
 ;
 
 -- 3. employees테이블과 departments테이블을 using절을 사용하여
@@ -108,8 +110,9 @@ SELECT
 FROM employees E
 INNER JOIN departments D
 ON E.department_id = D.department_id
-JOIN locations L
-ON d.location_id = l.location_id
+INNER JOIN locations L
+ON D.location_id = L.location_id
+ORDER BY E.employee_id
 ;
 
 -- 5. employees 테이블과 jobs 테이블을 INNER JOIN하여 
@@ -125,22 +128,34 @@ ON E.job_id = J.job_id
 -- 6. employees 테이블과 departments 테이블을 INNER JOIN하여 
 -- 부서명과 각 부서의 최대 급여값을 조회하세요.
 SELECT
+    E.department_id,
     D.department_name,
-    MAX(E.salary)
+    MAX(E.salary) "MAX salary"
 FROM employees E
 INNER JOIN departments D
-ON e.department_id = d.department_id
-GROUP BY department_name
+ON E.department_id = D.department_id
+GROUP BY E.department_id, D.department_name
+ORDER BY E.department_id
 ;
 -- 7. employees 테이블과 jobs 테이블을 INNER JOIN하여 
 --    직무별 평균 급여와 직무 타이틀을 조회하세요.
 SELECT
+    E.job_id,
     j.job_title,
-    AVG(salary) "Average salary"
+    AVG(E.salary) "Average salary"
 FROM employees E
 INNER JOIN jobs J
 ON E.job_id = J.job_id
-GROUP BY job_title
+GROUP BY E.job_id, j.job_title
+ORDER BY E.job_id
 ;
 
+SELECT 
+    E.job_id,
+    J.job_title,
+    AVG(E.salary)
+FROM employees E, jobs J
+WHERE E.job_id = J.job_id
+GROUP BY E.job_id, J.job_title
+;
 
