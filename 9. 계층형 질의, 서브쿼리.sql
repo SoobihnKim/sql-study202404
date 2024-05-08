@@ -187,6 +187,52 @@ GROUP BY E.emp_no, E.emp_nm
 ORDER BY E.emp_no
 ;
 
+-- EXISTS문 : 메인쿼리의 비교조건이 서브쿼리의 결과 중 
+--           만족하는 값이 하나라도 존재하면 참
+-- 주소가 강남인 직원들이 근무하고 있는 부서정보를 조회 (부서코드, 부서명)
+
+SELECT 
+    dept_cd,
+    dept_nm
+FROM tb_dept
+WHERE dept_cd IN (100009, 100010)
+;
+
+SELECT 
+    dept_cd
+FROM tb_emp
+WHERE addr LIKE '%강남%'
+;
+
+SELECT 
+    dept_cd,
+    dept_nm
+FROM tb_dept
+WHERE dept_cd IN (
+    SELECT 
+        dept_cd
+    FROM tb_emp
+    WHERE addr LIKE '%강남%'
+)
+;
+SELECT 
+    dept_cd,
+    dept_nm
+FROM tb_dept D
+WHERE EXISTS (
+    SELECT 
+        D.dept_cd
+    FROM tb_emp E
+    WHERE addr LIKE '%강남%'
+        AND D.dept_cd = E.dept_cd
+)
+;
+SELECT COUNT(0)
+FROM tb_emp;
+
+SELECT 999
+FROM tb_emp;
+
 
 SELECT
    COUNT(emp_nm)
@@ -225,5 +271,35 @@ WHERE (A.dept_cd, A.birth_de) IN (
                     )
 ORDER BY A.emp_no
 ;
+
+
+-- 인라인 뷰 서브쿼리
+-- FROM절에 쓰는 서브쿼리
+
+-- 각 사원의 사번과 이름과 평균 급여정보를 알고 싶음
+SELECT
+    E.emp_no,
+    E.emp_nm,
+    S.pay_avg
+FROM tb_emp E
+JOIN (
+    SELECT emp_no, AVG(pay_amt) AS pay_avg
+    FROM tb_sal_his
+    GROUP BY emp_no
+) S
+ON E.emp_no = S.emp_no
+ORDER BY E.emp_no
+;
+
+-- 스칼라 서브쿼리 (SELECT, INSERT, UPDATE절에 쓰는 서브쿼리)
+
+-- 사원의 사번, 사원명, 부서명, 생년월일, 성별코드를 조회
+SELECT
+    E.emp_no,
+    E.emp_nm,
+    (SELECT dept_nm FROM tb_dept D WHERE E.dept_cd = D.dept_cd) AS dept_nm,
+    E.birth_de,
+    E.sex_cd
+FROM tb_emp E;
 
 
